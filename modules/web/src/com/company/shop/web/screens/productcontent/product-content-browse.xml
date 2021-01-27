@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+        caption="msg://productContentBrowse.caption"
+        focusComponent="productContentsTable"
+        messagesPack="com.company.shop.web.screens.productcontent">
+    <data readOnly="true">
+        <collection id="productContentsDc"
+                    class="com.company.shop.entity.ProductContent">
+            <view extends="_local">
+                <property name="fileProduct" view="_minimal"/>
+                <property name="product" view="_minimal"/>
+            </view>
+            <loader id="productContentsDl">
+                <query>
+                    <![CDATA[select e from shop_ProductContent e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="productContentsTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="productContentsTable"
+                dataLoader="productContentsDl">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="productContentsTable"
+                    width="100%"
+                    dataContainer="productContentsDc">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+            </actions>
+            <columns>
+                <column id="productContentUz"/>
+                <column id="productContentRu"/>
+                <column id="fileProduct"/>
+                <column id="product"/>
+            </columns>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn" action="productContentsTable.create"/>
+                <button id="editBtn" action="productContentsTable.edit"/>
+                <button id="removeBtn" action="productContentsTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

@@ -1,0 +1,44 @@
+package com.company.shop.config.utils;
+
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+@Component
+public class InlineButton {
+
+    public InlineKeyboardButton button(String text, String callbackData) {
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(text);
+        inlineKeyboardButton.setCallbackData(callbackData);
+        return inlineKeyboardButton;
+    }
+
+
+
+    public List<InlineKeyboardButton> row(InlineKeyboardButton... inlineKeyboardButtons) {
+        List<InlineKeyboardButton> row = new LinkedList<>();
+        row.addAll(Arrays.asList(inlineKeyboardButtons));
+
+        return row;
+    }
+
+
+    public List<List<InlineKeyboardButton>> collection(List<InlineKeyboardButton>... rows) {
+        List<List<InlineKeyboardButton>> collection = new LinkedList<>();
+        collection.addAll(Arrays.asList(rows));
+        return collection;
+    }
+
+
+    public InlineKeyboardMarkup markup(List<List<InlineKeyboardButton>> collection) {
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+        keyboardMarkup.setKeyboard(collection);
+        return keyboardMarkup;
+    }
+
+}

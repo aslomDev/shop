@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+        caption="msg://goodsBrowse.caption"
+        focusComponent="goodsesTable"
+        messagesPack="com.company.shop.web.screens.goods">
+    <data readOnly="true">
+        <collection id="goodsesDc"
+                    class="com.company.shop.entity.Goods">
+            <view extends="_local"/>
+            <loader id="goodsesDl">
+                <query>
+                    <![CDATA[select e from shop_Goods e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="goodsesTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="goodsesTable"
+                dataLoader="goodsesDl">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="goodsesTable"
+                    width="100%"
+                    dataContainer="goodsesDc">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+            </actions>
+            <columns>
+                <column id="goodsUz"/>
+                <column id="goodsRu"/>
+            </columns>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn" action="goodsesTable.create"/>
+                <button id="editBtn" action="goodsesTable.edit"/>
+                <button id="removeBtn" action="goodsesTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

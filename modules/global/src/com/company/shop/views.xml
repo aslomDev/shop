@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+
+    <view entity="shop_Category" name="category-view">
+        <property name="goods"/>
+        <property name="categoryRu"/>
+    </view>
+    <view entity="shop_Goods" name="goods-view">
+        <property name="goodsRu"/>
+    </view>
+    <view entity="shop_Product" name="product-view">
+        <property name="category"/>
+        <property name="productRu"/>
+    </view>
+    <view entity="shop_ProductContent" name="productContent-view">
+        <property name="fileProduct"/>
+        <property name="product"/>
+        <property name="productContentRu"/>
+    </view>
+</views>
