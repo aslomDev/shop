@@ -125,11 +125,11 @@ public class TgConfig extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "lolMessagBot";
+        return "vidfastBot";
     }
 
     @Override
     public String getBotToken() {
-        return "1487031714:AAEz7teOXNw1CmUG9BCUxp225NcWYVZ8p5w";
+        return "1426859696:AAHSsYnF2H59w_ndr6utm8W3sTIzZ1wQvIA";
     }
 }
