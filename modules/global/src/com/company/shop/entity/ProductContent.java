@@ -5,6 +5,7 @@ import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.entity.HasUuid;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 
@@ -20,12 +21,14 @@ public class ProductContent extends BaseIntegerIdEntity {
     private String productContentRu;
 
 
-    private @JoinColumn(name = "fileProduct_id", nullable = false)
+    private @JoinColumn(name = "fileProduct_id")
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     FileDescriptor fileProduct;
 
     private @JoinColumn(name = "product_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
     Product product;
 
     public static long getSerialVersionUID() {
