@@ -1,13 +1,7 @@
 package com.company.shop.config.utils;
 
-import com.company.shop.config.LangConfig;
-import com.company.shop.config.SessionIdConfig;
-import com.company.shop.entity.Goods;
-import com.company.shop.service.GoodsService;
 import com.company.shop.service.UserService;
-import com.haulmont.cuba.security.app.Authentication;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
@@ -16,20 +10,19 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.inject.Inject;
-import javax.swing.plaf.PanelUI;
 
 @Component
 public class CommandUtils {
     @Inject private ButtonUtils buttonUtils;
     @Inject private InlineButton inlineButton;
     @Inject private UserService userService;
-    @Inject private GoodsService goodsService;
-    @Inject private LangConfig langConfig;
-    @Inject private SessionIdConfig sId;
+    @Inject private Lang lang;
 
+    /// methods
     SendMessage sendMessage = new SendMessage();
     EditMessageText editMessageText = new EditMessageText();
     DeleteMessage deleteMessage = new DeleteMessage();
+    EditMessageReplyMarkup editReply = new EditMessageReplyMarkup();
 
 
     public SendMessage message(String text, String id, Update update){
@@ -51,8 +44,6 @@ public class CommandUtils {
 
     public EditMessageText start(Update update){
         Message message = update.getCallbackQuery().getMessage();
-        EditMessageText editMessageText = new EditMessageText();
-
         editMessageText.setChatId(message.getChatId().toString());
         editMessageText.setMessageId(message.getMessageId());
         editMessageText.setText("Выберите язык");
@@ -66,18 +57,20 @@ public class CommandUtils {
 
     public EditMessageText goods(Update update){
         Message message = update.getCallbackQuery().getMessage();
-        if (langConfig.getLang().equals("uz")){
+        if (lang.getLang(update).equals("uz")){
+
             editMessageText.setText("Tovarlarimiz bilan tanishib chiqing. \n" + "Marhamat .");
             editMessageText.setChatId(String.valueOf(message.getChatId()));
             editMessageText.setMessageId(message.getMessageId());
-            editMessageText.setReplyMarkup(inlineButton.markup(buttonUtils.goodsCollection()));
+            editMessageText.setReplyMarkup(inlineButton.markup(buttonUtils.goodsCollection(lang.getLang(update), lang.getUser(update))));
             return editMessageText;
-        }else if (langConfig.getLang().equals("ru")){
+        }
+        else if (lang.getLang(update).equals("ru")){
             editMessageText.setText("Познакомьтесь с нашими товарами.\n" +
                     "пожалуйста .");
             editMessageText.setChatId(String.valueOf(message.getChatId()));
             editMessageText.setMessageId(message.getMessageId());
-            editMessageText.setReplyMarkup(inlineButton.markup(buttonUtils.goodsCollection()));
+            editMessageText.setReplyMarkup(inlineButton.markup(buttonUtils.goodsCollection(lang.getLang(update), lang.getUser(update))));
             return editMessageText;
         }
         return null;
@@ -86,78 +79,76 @@ public class CommandUtils {
     public EditMessageReplyMarkup category(Update update){
         String data = update.getCallbackQuery().getData();
         Message message = update.getCallbackQuery().getMessage();
-        EditMessageReplyMarkup edit = new EditMessageReplyMarkup();
-        edit.setChatId(message.getChatId().toString());
-        edit.setMessageId(message.getMessageId());
-        if (data.startsWith("goods#Category")){
+        editReply.setChatId(message.getChatId().toString());
+        editReply.setMessageId(message.getMessageId());
+        if (data.startsWith("goods#Category")) {
             String id = data.substring(14);
-            System.out.println("date to id " + id);
             int ids = Integer.parseInt(id);
-            System.out.println("getGoods default " + sId.getGoodsId());
-
-            if (sId.getGoodsId() == ids) {
-                edit.setReplyMarkup(inlineButton.markup(buttonUtils.CategoryCollection(sId.getGoodsId())));
-                return edit;
-            }else {
-                sId.setGoodsId(ids);
-                edit.setReplyMarkup(inlineButton.markup(buttonUtils.CategoryCollection(sId.getGoodsId())));
-                return edit;
-            }
+            userService.createGoods(lang.getUser(update), ids);
         }
-        edit.setReplyMarkup(inlineButton.markup(buttonUtils.CategoryCollection(sId.getGoodsId())));
-        return edit;
+        editReply.setReplyMarkup(inlineButton.markup(buttonUtils.categoryCollection(lang.getGoods(update), lang.getUser(update), lang.getLang(update))));
+        return editReply;
 
 
     }
 
-    public EditMessageReplyMarkup product(Update update){
+    public SendMessage productNextButton(Update update) {
+        Message message = update.getCallbackQuery().getMessage();
         String data = update.getCallbackQuery().getData();
-        Message message = update.getCallbackQuery().getMessage();
-        EditMessageReplyMarkup edit = new EditMessageReplyMarkup();
-        edit.setChatId(message.getChatId().toString());
-        edit.setMessageId(message.getMessageId());
-        if (data.startsWith("category#Product")){
-            String id = data.substring(16);
-            System.out.println("product to id " + id);
-            System.out.println("categoryId  " + sId.getCategoryId());
-            int ids = Integer.parseInt(id);
-            if (sId.getCategoryId() == ids){
-                edit.setReplyMarkup(inlineButton.markup(buttonUtils.productCollection(sId.getCategoryId())));
-                return edit;
-            }else {
-                sId.setCategoryId(ids);
-                edit.setReplyMarkup(inlineButton.markup(buttonUtils.productCollection(sId.getCategoryId())));
-                return edit;
-            }
-        }
-        edit.setReplyMarkup(inlineButton.markup(buttonUtils.productCollection(sId.getCategoryId())));
-        return edit;
-    }
-
-    public SendMessage productNextButton(Update update){
-        Message message = update.getCallbackQuery().getMessage();
-        sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText("");
-        sendMessage.setReplyMarkup(null);
-        return null;
-    }
-
-    public SendMessage productBackButton(Update update){
-        Message message = update.getCallbackQuery().getMessage();
         sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setText(".");
-        if (langConfig.getLang().equals("uz")){
-            sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
-                    inlineButton.button("orqaga", "category#"),
-                    inlineButton.button("yana", "category#Product")
-            ))));
-        }else if (langConfig.getLang().equals("ru")){
-            sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
-                    inlineButton.button("назад", "category#"),
-                    inlineButton.button("ешё", "product#delete")
-            ))));
+        if (data.startsWith("category#next*")) {
+            if (lang.getLang(update).equals("uz")){
+              if (lang.getout(update)){
+                  sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
+                          inlineButton.button("orqaga", "goods#"),
+                          inlineButton.button("yana", "category#next*")
+                  ))));
+              }else if (!lang.getout(update)){
+                  sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(
+                          inlineButton.row(
+                                  inlineButton.button("orqaga", "goods#")
+                          ))));
+              }
+            } else if (lang.getLang(update).equals("ru")){
+                if (lang.getout(update)){
+                    sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
+                            inlineButton.button("назад", "goods#"),
+                            inlineButton.button("ешё", "category#next*")
+                    ))));
+                }else if (!lang.getout(update)){
+                    sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
+                            inlineButton.button("назад", "goods#")
+                    ))));
+                }
+            }
+        } else  {
+            if (lang.getLang(update).equals("uz")) {
+                if (lang.getout(update)){
+                    sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
+                            inlineButton.button("orqaga", "goods#"),
+                            inlineButton.button("yana", "category#next*")
+                    ))));
+                }else if (!lang.getout(update)){
+                    sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
+                            inlineButton.button("orqaga", "goods#")
+                    ))));
+                }
+            } else if (lang.getLang(update).equals("ru")){
+                if (lang.getout(update)){
+                    sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
+                            inlineButton.button("назад", "goods#"),
+                            inlineButton.button("ешё", "category#next*" + 1)
+                    ))));
+                }else if (!lang.getout(update)){
+                    sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
+                            inlineButton.button("назад", "goods#")
+                    ))));
+                }
+            }
         }
         return sendMessage;
+
     }
 
     public DeleteMessage deleteMessage(Update update){
@@ -165,6 +156,34 @@ public class CommandUtils {
         deleteMessage.setChatId(message.getChatId().toString());
         deleteMessage.setMessageId(message.getMessageId());
         return deleteMessage;
+    }
+
+
+    public EditMessageReplyMarkup contentIsNull(Update update){
+        Message message = update.getCallbackQuery().getMessage();
+        editReply.setChatId(message.getChatId().toString());
+        editReply.setMessageId(message.getMessageId());
+        editReply.setReplyMarkup(inlineButton.markup(buttonUtils.contentIsNull(lang.getLang(update))));
+        return editReply;
+    }
+
+    public EditMessageText productIsNull(Update update){
+        Message message = update.getCallbackQuery().getMessage();
+        editMessageText.setChatId(message.getChatId().toString());
+        editMessageText.setMessageId(message.getMessageId());
+        if (lang.getLang(update).equals("uz")){
+            editMessageText.setText("uzur hozircha content mavjud emas!");
+            editMessageText.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
+                    inlineButton.button("oqaga", "goods#")
+            ))));
+        }else if (lang.getLang(update).equals("ru")){
+            editMessageText.setText("контент не найдено!");
+            editMessageText.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
+                    inlineButton.button("назад", "goods#")
+            ))));
+        }
+        return editMessageText;
+
     }
 
 

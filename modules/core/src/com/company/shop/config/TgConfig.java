@@ -1,10 +1,9 @@
 package com.company.shop.config;
 
 
-import com.company.shop.config.utils.CommandUtils;
-import com.company.shop.config.utils.MediaUtils;
-import com.company.shop.config.utils.ProductContentUtils;
-import com.company.shop.entity.ProductContent;
+import com.company.shop.config.utils.*;
+
+import com.company.shop.service.UserService;
 import com.haulmont.cuba.security.app.Authentication;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -12,23 +11,21 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.inject.Inject;
-
 
 @Component
 public class TgConfig extends TelegramLongPollingBot {
     @Inject private CommandUtils commandUtils;
     @Inject private MediaUtils mediaUtils;
-    @Inject private ProductContentUtils contentUtils;
     @Inject private Authentication authentication;
-    @Inject private LangConfig langConfig;
+    @Inject private Lang lang;
+    @Inject private InlineButton inlineButton;
+    @Inject private UserService userService;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -40,22 +37,39 @@ public class TgConfig extends TelegramLongPollingBot {
            if (data.equals("start")){
                editMsg(commandUtils.start(update));
            }else if (data.equals("uz") || data.equals("ru")){
-               langConfig.setLang(data);
+               userService.lang(update.getCallbackQuery().getFrom().getId().toString(), data);
                editMsg(commandUtils.goods(update));
            }else if (data.startsWith("goods#")){
                editMarkup(commandUtils.category(update));
            }else if (data.startsWith("category#")){
-//               deleteMsg(commandUtils.deleteMessage(update));
-               editMarkup(commandUtils.product(update));
-           }else if (data.startsWith("product#")){
-               deleteMsg(commandUtils.deleteMessage(update));
-//               if (data.startsWith("product#delete")){
-//                   deleteMsg(commandUtils.deleteMessage(update));
-//               }
-               sendMedia(mediaUtils.productContent(update));
 
-               sendMsg(commandUtils.productBackButton(update));
-
+               if (!mediaUtils.outSize(update) && mediaUtils.contentOutSize(update)){
+                   deleteMsg(commandUtils.deleteMessage(update));
+//                  if (!mediaUtils.contentOutSize(update)){
+                   if (data.startsWith("category#next")){
+                       mediaUtils.pContentNext(update);
+                       mediaUtils.pContentLoopNext(update);
+                       mediaUtils.outButtonProduct(update);
+                   }else {
+                       if (!mediaUtils.contetn1(update)) {
+                           mediaUtils.pContentLoop(update);
+                       }
+                       mediaUtils.outButtonProduct(update);
+                   }
+                      if (!lang.getOneContent(update)){
+                          sendMedia(mediaUtils.productAndContent(update));
+                          sendMsg(commandUtils.productNextButton(update));
+                      }else {
+                          sendPhoto(mediaUtils.sendMediaPhoto(update));
+                          sendMsg(commandUtils.productNextButton(update));
+                      }
+//                  }
+//                  else {
+//                      editMarkup(commandUtils.contentIsNull(update));
+//                  }
+               }else {
+                   editMarkup(commandUtils.contentIsNull(update));
+               }
            }
        }
        authentication.end();
@@ -125,11 +139,11 @@ public class TgConfig extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "vidfastBot";
+        return "lolMessagBot";
     }
 
     @Override
     public String getBotToken() {
-        return "1426859696:AAHSsYnF2H59w_ndr6utm8W3sTIzZ1wQvIA";
+        return "1487031714:AAEz7teOXNw1CmUG9BCUxp225NcWYVZ8p5w";
     }
 }

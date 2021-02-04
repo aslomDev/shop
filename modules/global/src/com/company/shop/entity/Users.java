@@ -29,6 +29,24 @@ public class Users extends BaseIntegerIdEntity {
     @Column(name = "userId")
     private String userId;
 
+    @Column(name = "lang")
+    private String lang;
+
+    @Column(name = "item")
+    private Integer item;
+
+    @Column(name = "goodsId")
+    private Integer goodsId;
+
+    @Column(name = "categoryId")
+    private Integer categoryId;
+
+    @Column(name = "outContent")
+    private Boolean outContent = false;
+
+    @Column(name = "oneContent")
+    private Boolean oneContent = false;
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
@@ -71,5 +89,53 @@ public class Users extends BaseIntegerIdEntity {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
+    }
+
+    public Integer getItem() {
+        return item;
+    }
+
+    public void setItem(Integer item) {
+        this.item = item;
+    }
+
+    public Integer getGoodsId() {
+        return goodsId;
+    }
+
+    public void setGoodsId(Integer goodsId) {
+        this.goodsId = goodsId;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Boolean getOutContent() {
+        return outContent;
+    }
+
+    public void setOutContent(Boolean outContent) {
+        this.outContent = outContent;
+    }
+
+    public Boolean getOneContent() {
+        return oneContent;
+    }
+
+    public void setOneContent(Boolean oneContent) {
+        this.oneContent = oneContent;
     }
 }

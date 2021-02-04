@@ -4,8 +4,8 @@ create table SHOP_PRODUCT_CONTENT (
     --
     productConentNameUz varchar(255) not null,
     productConentNameRu varchar(255) not null,
-    fileProduct_id uuid,
-    product_id integer,
+    fileProduct_id uuid not null,
+    product_id integer not null,
     --
     primary key (ID)
 )^
@@ -53,6 +53,12 @@ create table SHOP_USERS (
     userName varchar(255),
     phoneNumber varchar(255),
     userId varchar(255),
+    lang varchar(255),
+    item integer,
+    goodsId integer,
+    categoryId integer,
+    outContent boolean,
+    oneContent boolean,
     --
     primary key (ID)
 )^

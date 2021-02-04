@@ -12,16 +12,24 @@
     </data>
     <dialogMode height="600"
                 width="800"/>
-    <layout expand="editActions" spacing="true">
-        <form id="form" dataContainer="usersDc">
-            <column width="350px">
-                <textField id="lastNameField" property="lastName"/>
-                <textField id="firstNameField" property="firstName"/>
-                <textField id="userNameField" property="userName"/>
-                <textField id="phoneNumberField" property="phoneNumber"/>
-                <textField id="userIdField" property="userId"/>
-            </column>
-        </form>
+    <layout expand="scrollBox" spacing="true">
+        <scrollBox id="scrollBox" spacing="true">
+            <form id="form" dataContainer="usersDc">
+                <column width="350px">
+                    <textField id="lastNameField" property="lastName"/>
+                    <textField id="firstNameField" property="firstName"/>
+                    <textField id="userNameField" property="userName"/>
+                    <textField id="phoneNumberField" property="phoneNumber"/>
+                    <textField id="userIdField" property="userId"/>
+                    <textField id="langField" property="lang"/>
+                    <textField id="itemField" property="item"/>
+                    <textField id="goodsIdField" property="goodsId"/>
+                    <textField id="categoryIdField" property="categoryId"/>
+                    <checkBox id="outContentField" property="outContent"/>
+                    <checkBox id="oneContentField" property="oneContent"/>
+                </column>
+            </form>
+        </scrollBox>
         <hbox id="editActions" spacing="true">
             <button action="windowCommitAndClose"/>
             <button action="windowClose"/>

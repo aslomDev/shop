@@ -1,22 +1,22 @@
 package com.company.shop.config.utils;
 
-import com.company.shop.config.LangConfig;
-import com.company.shop.config.SessionIdConfig;
+import com.company.shop.entity.Product;
 import com.company.shop.entity.ProductContent;
 import com.company.shop.service.ProductContentService;
 import com.company.shop.service.ProductService;
+import com.company.shop.service.UserService;
 import com.haulmont.cuba.core.global.FileLoader;
 import com.haulmont.cuba.core.global.FileStorageException;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,58 +25,383 @@ public class MediaUtils {
     @Inject private ProductContentService productContentService;
     @Inject private FileLoader fileLoader;
     @Inject private ProductService productService;
-    @Inject private SessionIdConfig sessionIdConfig;
-    @Inject private LangConfig langConfig;
+    @Inject private InlineButton inlineButton;
+    @Inject private UserService userService;
+    @Inject private Lang lang;
 
-    public SendMediaGroup productContent(Update update){
-        Message message = update.getCallbackQuery().getMessage();
-        String data = update.getCallbackQuery().getData();
-        String ol = data.substring(8);
-        System.out.println("date to id " + ol);
-        int i = Integer.parseInt(ol);
+    // methods
+
+    public SendMediaGroup productAndContent(Update update){
         SendMediaGroup sendMediaGroup = new SendMediaGroup();
         List<InputMedia> inputMediaList = new LinkedList<>();
-        List<ProductContent> list = productContentService.getProductContent(i);
-        int caption = 0;
-        if (langConfig.getLang().equals("uz")){
-            for (ProductContent content : list){
-                try {
-                    caption=caption + 1;
-                    InputMediaPhoto inputMedia = new InputMediaPhoto();
-                    inputMedia.setMedia(fileLoader.openStream(content.getFileProduct()), content.getFileProduct().getName());
-                    if (list.size() == caption){
-                        productService.getProduct(sessionIdConfig.getCategoryId()).forEach(dis -> {
-                            inputMedia.setCaption(dis.getDescriptionUz());
-                        });
+        Message message = update.getCallbackQuery().getMessage();
+        String data = update.getCallbackQuery().getData();
+        if (data.startsWith("category#Product")){
+            String id = data.substring(16);
+            int ids = Integer.parseInt(id);
+            if (!lang.getCategory(update).equals(ids)){
+                userService.createCategory(lang.getUser(update), ids);
+            }
+        }
+        if (data.startsWith("category#next")){
+            System.out.println("item " + lang.getItem(update));
+            List<Product> productList = productService.getProductOffset(lang.getCategory(update), lang.getItem(update));
+            System.out.println("size " + productList.size());
+                for (Product product : productList){
+                    List<ProductContent> productContentList = productContentService.getProductContent(product.getId());
+                    int caption = 0;
+                    int item = 1;
+                    for (ProductContent productContent : productContentList){
+                        item=item + 1;
+                        if (item < 6){
+                            try {
+                                caption=caption + 1;
+                                InputMediaPhoto inputMedia = new InputMediaPhoto();
+                                inputMedia.setMedia(fileLoader.openStream(productContent.getFileProduct()), productContent.getFileProduct().getName());
+                                if (productContentList.size() == caption){
+                                    List<Product> pCaption = productService.getProduct(lang.getCategory(update));
+                                    for (Product product1 : pCaption){
+                                        if (product.getId().equals(product1.getId())){
+                                            if (lang.getLang(update).equals("ru")) {
+                                                inputMedia.setCaption(product1.getDescriptionRu());
+                                            }else  if (lang.getLang(update).equals("uz")) {
+                                                inputMedia.setCaption(product1.getDescriptionUz());
+                                            }
+                                        }
+                                    }
+                                }
+                                inputMediaList.add(inputMedia);
+                            }catch (FileStorageException e){
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                    inputMediaList.add(inputMedia);
-                }catch (FileStorageException e){
-                    e.printStackTrace();
+
+                }
+
+        } else {
+            List<Product> productList = productService.getProductOffset(lang.getCategory(update),lang.getItem(update));
+            if (productList.size() == 1){
+                userService.createItem(lang.getUser(update), 1);
+                for (Product product : productList){
+                    List<ProductContent> productContentList = productContentService.getProductContent(product.getId());
+                    int caption = 0;
+                    int item = 1;
+                    for (ProductContent productContent : productContentList){
+                        item=item + 1;
+                        if (item < 6){
+                            try {
+                                caption=caption + 1;
+                                InputMediaPhoto inputMedia = new InputMediaPhoto();
+                                inputMedia.setMedia(fileLoader.openStream(productContent.getFileProduct()), productContent.getFileProduct().getName());
+                                if (productContentList.size() == caption){
+                                    List<Product> pCaption = productService.getProduct(lang.getCategory(update));
+                                    for (Product product1 : pCaption){
+                                        if (product.getId().equals(product1.getId())){
+                                            if (lang.getLang(update).equals("ru")) {
+                                                inputMedia.setCaption(product1.getDescriptionRu());
+                                            }else  if (lang.getLang(update).equals("uz")) {
+                                                inputMedia.setCaption(product1.getDescriptionUz());
+                                            }
+                                        }
+                                    }
+                                }
+                                inputMediaList.add(inputMedia);
+                            }catch (FileStorageException e){
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
                 }
             }
-        }else if (langConfig.getLang().equals("ru")){
-            for (ProductContent content : list){
-                try {
-                    caption=caption + 1;
-                    InputMediaPhoto inputMedia = new InputMediaPhoto();
-                    inputMedia.setMedia(fileLoader.openStream(content.getFileProduct()), content.getFileProduct().getName());
-                    if (list.size() == caption){
-                        productService.getProduct(sessionIdConfig.getCategoryId()).forEach(dis -> {
-                            inputMedia.setCaption(dis.getDescriptionRu());
-                        });
+        }
+        sendMediaGroup.setChatId(message.getChatId().toString());
+        if (!inputMediaList.isEmpty()){
+            sendMediaGroup.setMedias(inputMediaList);
+            return sendMediaGroup;
+        }
+        return null;
+
+    }
+
+    /**
+     * проверайть продакта
+     * @param update
+     * @return true content, false button
+     */
+    public boolean outSize(Update update){
+        String data = update.getCallbackQuery().getData();
+        if (data.startsWith("category#Product")) {
+            String id = data.substring(16);
+            int ids = Integer.parseInt(id);
+            System.out.println("outSize id" + ids);
+            userService.createCategory(lang.getUser(update), ids);
+        }
+        System.out.println("outSize lang id" + lang.getCategory(update));
+        List<Product> productList = productService.getProduct(lang.getCategory(update));
+        if (productList.size() == 0){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * проверайть контент продакта
+     * @param update
+     * @return true content, false button
+     */
+    public boolean contentOutSize(Update update){
+        String data = update.getCallbackQuery().getData();
+        if (data.startsWith("category#Product")) {
+            String id = data.substring(16);
+            int ids = Integer.parseInt(id);
+            System.out.println("outSize id" + ids);
+            userService.createCategory(lang.getUser(update), ids);
+        }
+        System.out.println("outSize lang id" + lang.getCategory(update));
+        List<Product> productList = productService.getProduct(lang.getCategory(update));
+        for (Product product : productList){
+            List<ProductContent> productContents = productContentService.getProductContent(product.getId());
+            if (productContents.size() > 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * проверайть контент продакта по индекс = 0
+     * что он оден или несколкьло
+     * оден true, несколкьло false
+     * @param update
+     * @return true sendPhoto, false sendMediaGroup
+     */
+    public boolean contetn1(Update update) {
+        List<Product> productList = productService.getProductOffset(lang.getCategory(update), 0);
+        if (productList.size() == 1) {
+            for (Product product : productList) {
+                List<ProductContent> productContents = productContentService.getProductContent(product.getId());
+                if (productContents.size() == 1) {
+                    userService.createItem(lang.getUser(update), 0);
+                    userService.createIsOneTrueContent(lang.getUser(update));
+                    return true;
+                } else if (productContents.size() > 1) {
+                    userService.createItem(lang.getUser(update), 0);
+                    userService.createIsOneFalseContent(lang.getUser(update));
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * проверайть контент продакта по остальные индексу
+     * что он оден или несколкьло
+     * записывают createIsOneTrueContent, createIsOneFalseContent
+     * также записывают item по индексу что би получать контент
+     * createIsOneTrueContent sendPhoto, createIsOneFalseContent sendMediaGroup
+     * @param update
+     */
+    public void pContentLoop(Update update){
+        String data = update.getCallbackQuery().getData();
+        int item = 1;
+            List<Product> products = productService.getProduct(lang.getCategory(update));
+            for (Product product : products){
+                if (item == 1) {
+                    item=item + 1;
+                    if (!data.startsWith("category#next")){
+                        List<ProductContent> productContents = productContentService.getProductContent(product.getId());
+                        if (!productContents.isEmpty()) {
+                            userService.createItem(lang.getUser(update), 0);
+                            break;
+                        }
                     }
-                    inputMediaList.add(inputMedia);
-                }catch (FileStorageException e){
-                    e.printStackTrace();
+                }else if (item > 1){
+                    List<ProductContent> productContents = productContentService.getProductContent(product.getId());
+                    if (productContents.size() == 1){
+                        userService.createIsOneTrueContent(lang.getUser(update));
+                        if (!data.startsWith("category#next")){
+                            userService.createItem(lang.getUser(update), item - 1);
+                        }
+//                        System.out.println("create item null " + lang.getItem(update));
+                        System.out.println("item loop == 1 " + lang.getItem(update));
+                        break;
+                    }else if (productContents.size() > 1){
+                        userService.createIsOneFalseContent(lang.getUser(update));
+                        if (!data.startsWith("category#next")){
+                            userService.createItem(lang.getUser(update), item - 1);
+                        }
+                        System.out.println("item loop > 1 " + lang.getItem(update));
+                        break;
+                    }
+                    item=item + 1;
+                }
+                System.out.println("item " + item);
+                System.out.println("item is id " + product.getId());
+
+            }
+    }
+
+    /**
+     * проверайть контент продакта по нажатие кнопка еше
+     * что он оден или несколкьло
+     * записывают createIsOneTrueContent, createIsOneFalseContent
+     * createIsOneTrueContent sendPhoto, createIsOneFalseContent sendMediaGroup
+     * @param update
+     */
+    public void pContentLoopNext(Update update){
+        List<Product> products = productService.getProductOffset(lang.getCategory(update), lang.getItem(update));
+        for (Product product : products){
+            List<ProductContent> productContents = productContentService.getProductContent(product.getId());
+            if (productContents.size() == 1){
+                userService.createIsOneTrueContent(lang.getUser(update));
+            }else if (productContents.size() > 1){
+                userService.createIsOneFalseContent(lang.getUser(update));
+            }
+        }
+    }
+
+    /**
+     * получать контент продакта по нажатие кнопка еше
+     * записывают item по индексу что би получать контент
+     * @param update
+     */
+    public void pContentNext(Update update){
+        List<Product> products = productService.getProduct(lang.getCategory(update));
+        int sizeAll = products.size();
+        int sizeOffset = lang.getItem(update);
+        sizeAll=sizeAll - sizeOffset;
+        int value = sizeAll;
+        System.out.println("sizeAll " + sizeAll);
+        System.out.println("sizeOffset " + sizeOffset);
+        System.out.println("value " + sizeOffset);
+        int item = 1;
+        List<Product> productsValue = productService.getProductOut(lang.getCategory(update), lang.getItem(update), value);
+        for (Product product : productsValue) {
+            item=item + 1;
+            if (item == 2) {
+                /// пустой! надо пропустить 0
+            } else {
+                List<ProductContent> productContents = productContentService.getProductContent(product.getId());
+                    if (productContents.size() >= 1) {
+                    userService.createItem(lang.getUser(update), lang.getItem(update) + item - 2);
+                        System.out.println("lang irem hozir " + lang.getItem(update));
+                        break;
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Button
+     * проверайть контент продакта по следующее индексу
+     * если есть записывают true что би получать button(еше), если нет false
+     * @param update
+     * true button(назад, еше), false button(назад)
+     */
+    public void outButtonProduct(Update update){
+        List<Product> products = productService.getProduct(lang.getCategory(update));
+        int sizeAll = products.size();
+        if (lang.getItem(update).equals(0)){
+            int sizeOffset = 1;
+            sizeAll=sizeAll - sizeOffset;
+            int value = sizeAll;
+
+            System.out.println("sizeAll " + sizeAll);
+            System.out.println("sizeOffset " + sizeOffset);
+            System.out.println("value " + sizeOffset);
+            int item = 1;
+            List<Product> productsValue = productService.getProductOut(lang.getCategory(update), lang.getItem(update), value);
+            for (Product product : productsValue) {
+                item=item + 1;
+                if (item == 2) {
+                    /// пустой! надо пропустить 0
+                    userService.createOutCFalse(lang.getUser(update));
+                } else {
+                    List<ProductContent> productContents = productContentService.getProductContent(product.getId());
+                    if (productContents.size() == 0) {
+                        userService.createOutCFalse(lang.getUser(update));
+                    } else if (productContents.size() >= 1) {
+                        userService.createOutCTrue(lang.getUser(update));
+                        break;
+                    }
+                }
+            }
+
+            //
+        }else {
+            int sizeOffset = lang.getItem(update);
+            sizeAll=sizeAll - sizeOffset;
+            int value = sizeAll;
+
+            System.out.println("sizeAll " + sizeAll);
+            System.out.println("sizeOffset " + sizeOffset);
+            System.out.println("value " + sizeOffset);
+            int item = 1;
+            List<Product> productsValue = productService.getProductOut(lang.getCategory(update), lang.getItem(update), value);
+            for (Product product : productsValue) {
+                item=item + 1;
+                if (item == 2) {
+                    /// пустой! надо пропустить 0
+                    userService.createOutCFalse(lang.getUser(update));
+                } else {
+                    List<ProductContent> productContents = productContentService.getProductContent(product.getId());
+                    if (productContents.size() == 0) {
+                        userService.createOutCFalse(lang.getUser(update));
+                    } else if (productContents.size() >= 1) {
+                        userService.createOutCTrue(lang.getUser(update));
+                        break;
+                    }
                 }
             }
         }
 
-        System.out.println("inputList " + inputMediaList);
 
-        sendMediaGroup.setChatId(message.getChatId().toString());
-        sendMediaGroup.setMedias(inputMediaList);
-        return sendMediaGroup;
     }
+
+
+
+    public SendPhoto sendMediaPhoto(Update update){
+        String data = update.getCallbackQuery().getData();
+        SendPhoto sendPhoto = new SendPhoto();
+        InputFile inputFile = new InputFile();
+        Message message = update.getCallbackQuery().getMessage();
+        System.out.println("send foto item "+  lang.getItem(update) );
+        List<Product> productList = productService.getProductOffset(lang.getCategory(update), lang.getItem(update));
+        System.out.println("send foto item keldi " + lang.getItem(update));
+
+       for (Product product : productList){
+           List<ProductContent> productContentList = productContentService.getProductContent(product.getId());
+          if (productContentList.size() == 1){
+              System.out.println("content sendPhoto size category " + lang.getCategory(update));
+              System.out.println("content sendPhoto size item " + lang.getItem(update));
+              for (ProductContent pC : productContentList){
+                  try {
+                      inputFile.setMedia(fileLoader.openStream(pC.getFileProduct()), pC.getFileProduct().getName());
+                      sendPhoto.setPhoto(inputFile);
+                      List<Product> products = productService.getProduct(lang.getCategory(update));
+                      for (Product product2 : products){
+                          if (product.getId().equals(product2.getId())){
+                              sendPhoto.setCaption(product.getDescriptionRu());
+                          }
+                      }
+
+                  } catch (FileStorageException e) {
+                      e.printStackTrace();
+                  }
+              }
+          }
+       }
+
+        sendPhoto.setChatId(message.getChatId().toString());
+        userService.createIsOneFalseContent(lang.getUser(update));
+
+        return sendPhoto;
+
+    }
+
 
 }

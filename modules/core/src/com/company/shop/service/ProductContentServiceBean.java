@@ -31,4 +31,41 @@ public class ProductContentServiceBean implements ProductContentService {
 
             return productContents;
         }
+
+    @Override
+    public List<ProductContent> getProductContentAll(int offset, int limit) {
+        List<ProductContent> productContents;
+        Transaction tx = persistence.createTransaction();
+        try {
+            TypedQuery<ProductContent> query = persistence.getEntityManager()
+                    .createQuery("select e from shop_ProductContent e", ProductContent.class)
+                    .addViewName("productContent-view");
+            query.setFirstResult(offset);
+            query.setMaxResults(limit);
+            productContents = query.getResultList();
+            tx.commit();
+        } finally {
+            tx.end();
+        }
+
+        return productContents;
+    }
+
+    @Override
+    public List<ProductContent> getProductContentAll2() {
+        List<ProductContent> productContents;
+        Transaction tx = persistence.createTransaction();
+        try {
+            TypedQuery<ProductContent> query = persistence.getEntityManager()
+                    .createQuery("select e from shop_ProductContent e", ProductContent.class)
+                    .addViewName("productContent-view");
+            productContents = query.getResultList();
+            tx.commit();
+        } finally {
+            tx.end();
+        }
+
+        return productContents;
+    }
+
 }

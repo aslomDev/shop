@@ -20,11 +20,11 @@ public class ProductContent extends BaseIntegerIdEntity {
     private String productContentRu;
 
 
-    private @JoinColumn(name = "fileProduct_id")
+    private @JoinColumn(name = "fileProduct_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     FileDescriptor fileProduct;
 
-    private @JoinColumn(name = "product_id")
+    private @JoinColumn(name = "product_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     Product product;
 

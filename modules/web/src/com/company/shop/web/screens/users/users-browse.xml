@@ -38,6 +38,12 @@
                 <column id="userName"/>
                 <column id="phoneNumber"/>
                 <column id="userId"/>
+                <column id="lang"/>
+                <column id="item"/>
+                <column id="goodsId"/>
+                <column id="categoryId"/>
+                <column id="outContent"/>
+                <column id="oneContent"/>
             </columns>
             <rowsCount/>
             <buttonsPanel id="buttonsPanel"
