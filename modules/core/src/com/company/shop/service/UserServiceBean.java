@@ -1,6 +1,7 @@
 package com.company.shop.service;
 
 import com.company.shop.config.TgConfig;
+import com.company.shop.entity.ActiveUser;
 import com.company.shop.entity.Users;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
@@ -12,6 +13,7 @@ import com.haulmont.cuba.security.app.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @Service(UserService.NAME)
 public class UserServiceBean implements UserService {
@@ -279,6 +281,38 @@ public class UserServiceBean implements UserService {
             queryA.setParameter("userId", id);
             return queryA.getFirstResult();
         } finally {
+            tx.end();
+        }
+    }
+
+    @Override
+    public List<Users> getAllUsers() {
+        List<Users> users;
+        Transaction tx = persistence.createTransaction();
+        try {
+            TypedQuery<Users> queryA = persistence.getEntityManager()
+                    .createQuery("select s from shop_Users s ", Users.class);
+            users = queryA.getResultList();
+            return users;
+        } finally {
+            tx.end();
+        }
+    }
+
+    public void deleteNoActive(String id){
+        Transaction tx = persistence.createTransaction();
+        try {
+            if (getUserId(id) != null){
+                Users users = getUserId(id);
+                EntityManager em = persistence.getEntityManager();
+                em.remove(users);
+                tx.commit();
+            }else {
+                System.out.println("user mavjud!");
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
             tx.end();
         }
     }

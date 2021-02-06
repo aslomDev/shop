@@ -2,6 +2,7 @@ package com.company.shop.config.utils;
 
 import com.company.shop.service.UserService;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
@@ -17,6 +18,7 @@ public class CommandUtils {
     @Inject private InlineButton inlineButton;
     @Inject private UserService userService;
     @Inject private Lang lang;
+    @Inject private KeyboardsButton makup;
 
     /// methods
     SendMessage sendMessage = new SendMessage();
@@ -41,6 +43,7 @@ public class CommandUtils {
         }
         return null;
     }
+
 
     public EditMessageText start(Update update){
         Message message = update.getCallbackQuery().getMessage();

@@ -10,6 +10,7 @@ import com.haulmont.cuba.core.global.DeletePolicy;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.UUID;
 @NamePattern("%s|productUz")
 @Table(name = "SHOP_PRODUCT")

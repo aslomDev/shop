@@ -7,6 +7,7 @@ import com.company.shop.service.ProductService;
 import com.company.shop.service.UserService;
 import com.haulmont.cuba.core.global.FileLoader;
 import com.haulmont.cuba.core.global.FileStorageException;
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -17,6 +18,10 @@ import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 
 import javax.inject.Inject;
+import java.io.*;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,12 +30,16 @@ public class MediaUtils {
     @Inject private ProductContentService productContentService;
     @Inject private FileLoader fileLoader;
     @Inject private ProductService productService;
-    @Inject private InlineButton inlineButton;
     @Inject private UserService userService;
     @Inject private Lang lang;
 
     // methods
 
+    /**
+     * SendMedia
+     * @param update
+     * @return List = album
+     */
     public SendMediaGroup productAndContent(Update update){
         SendMediaGroup sendMediaGroup = new SendMediaGroup();
         List<InputMedia> inputMediaList = new LinkedList<>();
@@ -117,6 +126,7 @@ public class MediaUtils {
             }
         }
         sendMediaGroup.setChatId(message.getChatId().toString());
+        System.out.println("media list " + sendMediaGroup.getMedias());
         if (!inputMediaList.isEmpty()){
             sendMediaGroup.setMedias(inputMediaList);
             return sendMediaGroup;
@@ -136,7 +146,9 @@ public class MediaUtils {
             String id = data.substring(16);
             int ids = Integer.parseInt(id);
             System.out.println("outSize id" + ids);
-            userService.createCategory(lang.getUser(update), ids);
+            if (!lang.getCategory(update).equals(ids)){
+                userService.createCategory(lang.getUser(update), ids);
+            }
         }
         System.out.println("outSize lang id" + lang.getCategory(update));
         List<Product> productList = productService.getProduct(lang.getCategory(update));
@@ -157,7 +169,9 @@ public class MediaUtils {
             String id = data.substring(16);
             int ids = Integer.parseInt(id);
             System.out.println("outSize id" + ids);
-            userService.createCategory(lang.getUser(update), ids);
+            if (!lang.getCategory(update).equals(ids)){
+                userService.createCategory(lang.getUser(update), ids);
+            }
         }
         System.out.println("outSize lang id" + lang.getCategory(update));
         List<Product> productList = productService.getProduct(lang.getCategory(update));
@@ -330,8 +344,6 @@ public class MediaUtils {
                     }
                 }
             }
-
-            //
         }else {
             int sizeOffset = lang.getItem(update);
             sizeAll=sizeAll - sizeOffset;
@@ -363,9 +375,12 @@ public class MediaUtils {
     }
 
 
-
+    /**
+     * SendPhoto
+     * @param update
+     * @return photo
+     */
     public SendPhoto sendMediaPhoto(Update update){
-        String data = update.getCallbackQuery().getData();
         SendPhoto sendPhoto = new SendPhoto();
         InputFile inputFile = new InputFile();
         Message message = update.getCallbackQuery().getMessage();
@@ -385,7 +400,11 @@ public class MediaUtils {
                       List<Product> products = productService.getProduct(lang.getCategory(update));
                       for (Product product2 : products){
                           if (product.getId().equals(product2.getId())){
-                              sendPhoto.setCaption(product.getDescriptionRu());
+                              if (lang.getLang(update).equals("uz")){
+                                  sendPhoto.setCaption(product.getDescriptionUz());
+                              }else if (lang.getLang(update).equals("ru")){
+                                  sendPhoto.setCaption(product.getDescriptionRu());
+                              }
                           }
                       }
 
@@ -399,9 +418,37 @@ public class MediaUtils {
         sendPhoto.setChatId(message.getChatId().toString());
         userService.createIsOneFalseContent(lang.getUser(update));
 
+        System.out.println("media photo " + sendPhoto.getPhoto());
         return sendPhoto;
 
     }
+
+
+//    public void uploadFile(String file_id) throws IOException {
+//        URL url = new URL("https://storage.kun.uz/source/thumbnails/_medium/6/t0BMDa8wLWwVfU_-iOnjj95WInhWAR0R_medium.jpg");
+////        BufferedReader in = new BufferedReader(new InputStreamReader( url.openStream()));
+////        String res = in.readLine();
+////        JSONObject jresult = new JSONObject(res);
+////        JSONObject path = jresult.getJSONObject("result");
+////        String file_path = path.getString("file_path");
+//
+//
+////        C:\Users\Аслом\projects\shop\modules\core\src\com\company\shop\core\file_1.jpg
+//
+//        File file = new File("C:\\Users\\Аслом\\projects\\shop\\modules\\core\\src\\com\\company\\shop\\core\\file_1.jpg");
+//        InputFile inputFile = new InputFile();
+//        inputFile.setMedia(file);
+//
+//        URL downoload = new URL("https://api.telegram.org/file/bot" + "1487031714:AAEz7teOXNw1CmUG9BCUxp225NcWYVZ8p5w" + "/" + file.getAbsolutePath());
+//        FileOutputStream fos = new FileOutputStream(file.getAbsoluteFile());
+//        System.out.println("Start upload");
+//        ReadableByteChannel rbc = Channels.newChannel(downoload.openStream());
+//        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+//        fos.close();
+//        rbc.close();
+////        uploadFlag = 0;
+//        System.out.println("Uploaded!");
+//    }
 
 
 }

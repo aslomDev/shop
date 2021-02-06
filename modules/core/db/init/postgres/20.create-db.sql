@@ -18,3 +18,9 @@ create unique index IDX_SHOP_CATEGORY_UK_categoryNameUz on SHOP_CATEGORY (catego
 create unique index IDX_SHOP_CATEGORY_UK_categoryNameRu on SHOP_CATEGORY (categoryNameRu)^
 create index IDX_SHOP_CATEGORY_ON_GOODS on SHOP_CATEGORY (GOODS_ID)^
 -- end SHOP_CATEGORY
+-- begin SHOP_ACTIVE_USER
+create unique index IDX_SHOP_ACTIVE_USER_UK_userId on SHOP_ACTIVE_USER (userId)^
+-- end SHOP_ACTIVE_USER
+-- begin SHOP_USERS
+create unique index IDX_SHOP_USERS_UK_userId on SHOP_USERS (userId)^
+-- end SHOP_USERS

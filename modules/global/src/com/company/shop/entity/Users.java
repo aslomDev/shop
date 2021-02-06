@@ -26,7 +26,7 @@ public class Users extends BaseIntegerIdEntity {
     @Column(name = "phoneNumber")
     private String phoneNumber;
 
-    @Column(name = "userId")
+    @Column(name = "userId", unique = true)
     private String userId;
 
     @Column(name = "lang")

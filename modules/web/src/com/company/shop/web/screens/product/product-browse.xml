@@ -16,6 +16,13 @@
                 </query>
             </loader>
         </collection>
+        <collection id="productContentCollection" class="com.company.shop.entity.ProductContent" view="productContent-view">
+            <loader id="productContentLoader">
+                <query>
+                    <![CDATA[select e from shop_ProductContent e where e.product.id = :contentId]]>
+                </query>
+            </loader>
+        </collection>
     </data>
     <dialogMode height="600"
                 width="800"/>
@@ -47,6 +54,7 @@
                 <button id="createBtn" action="productsTable.create"/>
                 <button id="editBtn" action="productsTable.edit"/>
                 <button id="removeBtn" action="productsTable.remove"/>
+                <button id="sendBtn" caption="msg://send"/>
             </buttonsPanel>
         </groupTable>
         <hbox id="lookupActions" spacing="true" visible="false">

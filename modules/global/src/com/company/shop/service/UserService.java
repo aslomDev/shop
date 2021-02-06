@@ -3,6 +3,8 @@ package com.company.shop.service;
 import com.company.shop.entity.Users;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+import java.util.List;
+
 public interface UserService {
     String NAME = "shop_UserService";
 
@@ -21,4 +23,7 @@ public interface UserService {
     void createIsOneTrueContent(String id);
     void createIsOneFalseContent(String id);
     boolean getIsOneContent(String id);
+    Users getUserId(String id);
+    List<Users> getAllUsers();
+    void deleteNoActive(String id);
 }

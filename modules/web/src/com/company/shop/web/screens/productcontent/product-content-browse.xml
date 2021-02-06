@@ -37,7 +37,6 @@
             </actions>
             <columns>
                 <column id="productContentUz"/>
-                <column id="productContentRu"/>
                 <column id="fileProduct"/>
                 <column id="product"/>
             </columns>

@@ -7,5 +7,6 @@
         <class>com.company.shop.entity.ProductContent</class>
         <class>com.company.shop.entity.Goods</class>
         <class>com.company.shop.entity.Users</class>
+        <class>com.company.shop.entity.ActiveUser</class>
     </persistence-unit>
 </persistence>

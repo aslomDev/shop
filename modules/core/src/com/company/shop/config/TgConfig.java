@@ -3,6 +3,8 @@ package com.company.shop.config;
 
 import com.company.shop.config.utils.*;
 
+import com.company.shop.entity.Users;
+import com.company.shop.service.ActiveUserService;
 import com.company.shop.service.UserService;
 import com.haulmont.cuba.security.app.Authentication;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.inject.Inject;
+import java.io.IOException;
 
 @Component
 public class TgConfig extends TelegramLongPollingBot {
@@ -24,11 +27,20 @@ public class TgConfig extends TelegramLongPollingBot {
     @Inject private MediaUtils mediaUtils;
     @Inject private Authentication authentication;
     @Inject private Lang lang;
-    @Inject private InlineButton inlineButton;
+    @Inject private ActiveUserService activeUserService;
     @Inject private UserService userService;
+    @Inject private KeyboardsButton markup;
 
     @Override
     public void onUpdateReceived(Update update) {
+//        try {
+//            mediaUtils.uploadFile(update.getMessage().getPhoto().get(2).getFileId());
+//
+////            System.out.println("file "+ update.getMessage().getPhoto().get(2).getFilePath() + " " + update.getMessage().getPhoto().get(2).getFileId());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
         authentication.begin();
        if (update.hasMessage()){
            sendMsg(commandUtils.message(update.getMessage().getText(), update.getMessage().getChatId().toString(), update));
@@ -42,10 +54,8 @@ public class TgConfig extends TelegramLongPollingBot {
            }else if (data.startsWith("goods#")){
                editMarkup(commandUtils.category(update));
            }else if (data.startsWith("category#")){
-
                if (!mediaUtils.outSize(update) && mediaUtils.contentOutSize(update)){
                    deleteMsg(commandUtils.deleteMessage(update));
-//                  if (!mediaUtils.contentOutSize(update)){
                    if (data.startsWith("category#next")){
                        mediaUtils.pContentNext(update);
                        mediaUtils.pContentLoopNext(update);
@@ -63,10 +73,6 @@ public class TgConfig extends TelegramLongPollingBot {
                           sendPhoto(mediaUtils.sendMediaPhoto(update));
                           sendMsg(commandUtils.productNextButton(update));
                       }
-//                  }
-//                  else {
-//                      editMarkup(commandUtils.contentIsNull(update));
-//                  }
                }else {
                    editMarkup(commandUtils.contentIsNull(update));
                }
@@ -109,6 +115,16 @@ public class TgConfig extends TelegramLongPollingBot {
         }
     }
 
+    public void sendMediaUi(SendMediaGroup sendMediaGroup) {
+        try {
+            execute(sendMediaGroup);
+        } catch (TelegramApiException e) {
+            Users users = userService.getUserId(sendMediaGroup.getChatId());
+            activeUserService.createNoActive("этот пользователь умер", users.getFirstName(), users.getLastName(), users.getUserName(), users.getUserId());
+            e.printStackTrace();
+        }
+    }
+
     public void sendPhoto(SendPhoto sendPhoto) {
         try {
             execute(sendPhoto);
@@ -116,6 +132,17 @@ public class TgConfig extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
+
+    public void sendPhotoUi(SendPhoto sendPhoto) {
+        try {
+            execute(sendPhoto);
+        } catch (TelegramApiException e) {
+            Users users = userService.getUserId(sendPhoto.getChatId());
+            activeUserService.createNoActive("этот пользователь умер", users.getFirstName(), users.getLastName(), users.getUserName(), users.getUserId());
+            e.printStackTrace();
+        }
+    }
+
     public void deleteMsg(DeleteMessage deleteMessage) {
         try {
             execute(deleteMessage);

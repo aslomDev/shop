@@ -1,1 +1,0 @@
-drop index IDX_SHOP_PRODUCT_ON_CATEGORY ;

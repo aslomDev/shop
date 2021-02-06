@@ -16,6 +16,7 @@
                 <entry key="shop_CategoryService" value="com.company.shop.service.CategoryService"/>
                 <entry key="shop_ProductService" value="com.company.shop.service.ProductService"/>
                 <entry key="shop_ProductContentService" value="com.company.shop.service.ProductContentService"/>
+                <entry key="shop_ActiveUserService" value="com.company.shop.service.ActiveUserService"/>
             </map>
         </property>
     </bean>
