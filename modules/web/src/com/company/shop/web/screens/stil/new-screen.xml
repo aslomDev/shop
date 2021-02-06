@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://newScreen.caption"
+        messagesPack="com.company.shop.web.screens.stil">
+    <layout>
+        <image id="backgroundImage"
+               scaleMode="COVER"
+               stylename="c-login-background"
+                width="1310"
+               height="600">
+            <relativePath  path="VAADIN/brand-login-screen/1.jpg" mimeType="image/jpeg"/>
+        </image>
+    </layout>
+</window>

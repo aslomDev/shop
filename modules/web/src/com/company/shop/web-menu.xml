@@ -11,5 +11,6 @@
         </menu>
         <item screen="shop_Users.browse" caption="mainMsg://menu_config.shop_Users.browse"/>
         <item screen="shop_ActiveUser.browse" caption="mainMsg://menu_config.shop_ActiveUser.browse"/>
+        <item screen="shop_" caption="mainMsg://menu_config.shop_"/>
     </menu>
 </menu-config>
