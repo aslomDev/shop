@@ -100,11 +100,12 @@ public class ButtonUtils {
             if (lang.equals("uz")){
               categoryService.getCategory(id).forEach(i -> {
                   InlineKeyboardButton button = new InlineKeyboardButton();
+                  List<InlineKeyboardButton> row2 = new LinkedList<>();
                   button.setText(i.getCategoryUz());
                   button.setCallbackData("category#Product" + i.getId());
-                  row.add(button);
+                  row2.add(button);
+                  collection.add(row2);
               });
-              collection.add(row);
               collection.add(inlineButton.row(
                       inlineButton.button("orqaga", "uz")
               ));
@@ -112,11 +113,13 @@ public class ButtonUtils {
           }else  if (lang.equals("ru")){
               categoryService.getCategory(id).forEach(i -> {
                   InlineKeyboardButton button = new InlineKeyboardButton();
+                  List<InlineKeyboardButton> row2 = new LinkedList<>();
                   button.setText(i.getCategoryRu());
                   button.setCallbackData("category#Product" + i.getId());
-                  row.add(button);
+                  row2.add(button);
+                  collection.add(row2);
               });
-              collection.add(row);
+//              collection.add(row);
               collection.add(inlineButton.row(
                       inlineButton.button("назад", "ru")
               ));

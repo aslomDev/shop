@@ -15,6 +15,5 @@
     <view entity="shop_ProductContent" name="productContent-view">
         <property name="fileProduct"/>
         <property name="product"/>
-        <property name="productContentRu"/>
     </view>
 </views>

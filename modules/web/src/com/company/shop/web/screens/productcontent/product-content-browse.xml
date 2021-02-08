@@ -36,7 +36,7 @@
                 <action id="remove" type="remove"/>
             </actions>
             <columns>
-                <column id="productContentUz"/>
+                <column id="productContent"/>
                 <column id="fileProduct"/>
                 <column id="product"/>
             </columns>

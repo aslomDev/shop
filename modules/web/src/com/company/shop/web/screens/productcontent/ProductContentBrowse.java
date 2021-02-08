@@ -16,7 +16,6 @@ import javax.inject.Inject;
 @LookupComponent("productContentsTable")
 @LoadDataBeforeShow
 public class ProductContentBrowse extends StandardLookup<ProductContent> {
-
     @Inject
     private UiComponents uiComponents;
     @Inject
@@ -53,5 +52,4 @@ public class ProductContentBrowse extends StandardLookup<ProductContent> {
         image.setStyleName("avatar-icon-small");
         return image;
     }
-
 }

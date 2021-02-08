@@ -29,7 +29,6 @@ public class TgConfig extends TelegramLongPollingBot {
     @Inject private Lang lang;
     @Inject private ActiveUserService activeUserService;
     @Inject private UserService userService;
-    @Inject private KeyboardsButton markup;
 
     @Override
     public void onUpdateReceived(Update update) {

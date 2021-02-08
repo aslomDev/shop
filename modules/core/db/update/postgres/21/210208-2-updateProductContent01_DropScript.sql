@@ -1,0 +1,1 @@
+alter table SHOP_PRODUCT_CONTENT drop column PRODUCTCONENTNAMEUZ__U36483 cascade ;

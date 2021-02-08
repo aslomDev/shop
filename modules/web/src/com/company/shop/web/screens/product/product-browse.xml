@@ -62,4 +62,10 @@
             <button action="lookupCancelAction"/>
         </hbox>
     </layout>
+    <facets>
+    <notification id="notification"
+                  caption="msg://error"
+                  description="msg://fileNotFound"
+                  type="WARNING"/>
+    </facets>
 </window>

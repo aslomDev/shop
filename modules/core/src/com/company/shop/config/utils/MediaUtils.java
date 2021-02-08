@@ -48,14 +48,10 @@ public class MediaUtils {
         if (data.startsWith("category#Product")){
             String id = data.substring(16);
             int ids = Integer.parseInt(id);
-            if (!lang.getCategory(update).equals(ids)){
                 userService.createCategory(lang.getUser(update), ids);
-            }
         }
         if (data.startsWith("category#next")){
-            System.out.println("item " + lang.getItem(update));
             List<Product> productList = productService.getProductOffset(lang.getCategory(update), lang.getItem(update));
-            System.out.println("size " + productList.size());
                 for (Product product : productList){
                     List<ProductContent> productContentList = productContentService.getProductContent(product.getId());
                     int caption = 0;
@@ -126,7 +122,6 @@ public class MediaUtils {
             }
         }
         sendMediaGroup.setChatId(message.getChatId().toString());
-        System.out.println("media list " + sendMediaGroup.getMedias());
         if (!inputMediaList.isEmpty()){
             sendMediaGroup.setMedias(inputMediaList);
             return sendMediaGroup;
@@ -145,12 +140,9 @@ public class MediaUtils {
         if (data.startsWith("category#Product")) {
             String id = data.substring(16);
             int ids = Integer.parseInt(id);
-            System.out.println("outSize id" + ids);
-            if (!lang.getCategory(update).equals(ids)){
                 userService.createCategory(lang.getUser(update), ids);
-            }
+
         }
-        System.out.println("outSize lang id" + lang.getCategory(update));
         List<Product> productList = productService.getProduct(lang.getCategory(update));
         if (productList.size() == 0){
             return true;
@@ -168,12 +160,8 @@ public class MediaUtils {
         if (data.startsWith("category#Product")) {
             String id = data.substring(16);
             int ids = Integer.parseInt(id);
-            System.out.println("outSize id" + ids);
-            if (!lang.getCategory(update).equals(ids)){
                 userService.createCategory(lang.getUser(update), ids);
-            }
         }
-        System.out.println("outSize lang id" + lang.getCategory(update));
         List<Product> productList = productService.getProduct(lang.getCategory(update));
         for (Product product : productList){
             List<ProductContent> productContents = productContentService.getProductContent(product.getId());
@@ -239,22 +227,16 @@ public class MediaUtils {
                         if (!data.startsWith("category#next")){
                             userService.createItem(lang.getUser(update), item - 1);
                         }
-//                        System.out.println("create item null " + lang.getItem(update));
-                        System.out.println("item loop == 1 " + lang.getItem(update));
                         break;
                     }else if (productContents.size() > 1){
                         userService.createIsOneFalseContent(lang.getUser(update));
                         if (!data.startsWith("category#next")){
                             userService.createItem(lang.getUser(update), item - 1);
                         }
-                        System.out.println("item loop > 1 " + lang.getItem(update));
                         break;
                     }
                     item=item + 1;
                 }
-                System.out.println("item " + item);
-                System.out.println("item is id " + product.getId());
-
             }
     }
 
@@ -288,9 +270,6 @@ public class MediaUtils {
         int sizeOffset = lang.getItem(update);
         sizeAll=sizeAll - sizeOffset;
         int value = sizeAll;
-        System.out.println("sizeAll " + sizeAll);
-        System.out.println("sizeOffset " + sizeOffset);
-        System.out.println("value " + sizeOffset);
         int item = 1;
         List<Product> productsValue = productService.getProductOut(lang.getCategory(update), lang.getItem(update), value);
         for (Product product : productsValue) {
@@ -301,7 +280,6 @@ public class MediaUtils {
                 List<ProductContent> productContents = productContentService.getProductContent(product.getId());
                     if (productContents.size() >= 1) {
                     userService.createItem(lang.getUser(update), lang.getItem(update) + item - 2);
-                        System.out.println("lang irem hozir " + lang.getItem(update));
                         break;
                 }
             }
@@ -324,9 +302,6 @@ public class MediaUtils {
             sizeAll=sizeAll - sizeOffset;
             int value = sizeAll;
 
-            System.out.println("sizeAll " + sizeAll);
-            System.out.println("sizeOffset " + sizeOffset);
-            System.out.println("value " + sizeOffset);
             int item = 1;
             List<Product> productsValue = productService.getProductOut(lang.getCategory(update), lang.getItem(update), value);
             for (Product product : productsValue) {
@@ -348,10 +323,6 @@ public class MediaUtils {
             int sizeOffset = lang.getItem(update);
             sizeAll=sizeAll - sizeOffset;
             int value = sizeAll;
-
-            System.out.println("sizeAll " + sizeAll);
-            System.out.println("sizeOffset " + sizeOffset);
-            System.out.println("value " + sizeOffset);
             int item = 1;
             List<Product> productsValue = productService.getProductOut(lang.getCategory(update), lang.getItem(update), value);
             for (Product product : productsValue) {
@@ -384,15 +355,11 @@ public class MediaUtils {
         SendPhoto sendPhoto = new SendPhoto();
         InputFile inputFile = new InputFile();
         Message message = update.getCallbackQuery().getMessage();
-        System.out.println("send foto item "+  lang.getItem(update) );
         List<Product> productList = productService.getProductOffset(lang.getCategory(update), lang.getItem(update));
-        System.out.println("send foto item keldi " + lang.getItem(update));
 
        for (Product product : productList){
            List<ProductContent> productContentList = productContentService.getProductContent(product.getId());
           if (productContentList.size() == 1){
-              System.out.println("content sendPhoto size category " + lang.getCategory(update));
-              System.out.println("content sendPhoto size item " + lang.getItem(update));
               for (ProductContent pC : productContentList){
                   try {
                       inputFile.setMedia(fileLoader.openStream(pC.getFileProduct()), pC.getFileProduct().getName());
@@ -418,7 +385,6 @@ public class MediaUtils {
         sendPhoto.setChatId(message.getChatId().toString());
         userService.createIsOneFalseContent(lang.getUser(update));
 
-        System.out.println("media photo " + sendPhoto.getPhoto());
         return sendPhoto;
 
     }

@@ -18,7 +18,6 @@ public class CommandUtils {
     @Inject private InlineButton inlineButton;
     @Inject private UserService userService;
     @Inject private Lang lang;
-    @Inject private KeyboardsButton makup;
 
     /// methods
     SendMessage sendMessage = new SendMessage();

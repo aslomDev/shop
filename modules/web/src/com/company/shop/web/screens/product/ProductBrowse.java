@@ -6,6 +6,7 @@ import com.company.shop.service.ProductService;
 import com.company.shop.service.UserService;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.components.Button;
+import com.haulmont.cuba.gui.components.NotificationFacet;
 import com.haulmont.cuba.gui.model.CollectionContainer;
 import com.haulmont.cuba.gui.model.CollectionLoader;
 import com.haulmont.cuba.gui.screen.*;
@@ -35,6 +36,8 @@ public class ProductBrowse extends StandardLookup<Product> {
     private CollectionContainer<ProductContent> productContentCollection;
     @Inject
     private UserService userService;
+    @Inject
+    private NotificationFacet notification;
 
 
     @Subscribe
@@ -58,9 +61,16 @@ public class ProductBrowse extends StandardLookup<Product> {
             fileDescriptors.add(content.getFileProduct());
         }
         List<Users> usersList = userService.getAllUsers();
-        usersList.forEach(i -> {
-            productService.sendPhoto(i.getUserId(), productsDl.getContainer().getItem().getDescriptionUz(),  fileDescriptors);
-        });
+        if (fileDescriptors.isEmpty()){
+            notification.getCaption();
+            notification.getDescription();
+            notification.show();
+
+        }else {
+            usersList.forEach(i -> {
+                productService.sendPhoto(i.getUserId(), productsDl.getContainer().getItem().getDescriptionUz(), fileDescriptors);
+            });
+        }
 
     }
 }

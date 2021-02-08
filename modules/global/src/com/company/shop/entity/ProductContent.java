@@ -3,6 +3,8 @@ package com.company.shop.entity;
 import com.haulmont.cuba.core.entity.BaseIntegerIdEntity;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.entity.HasUuid;
+import com.haulmont.cuba.core.entity.annotation.Lookup;
+import com.haulmont.cuba.core.entity.annotation.LookupType;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -17,12 +19,8 @@ import java.util.UUID;
 public class ProductContent extends BaseIntegerIdEntity {
     private static final long serialVersionUID = -5778583826035306996L;
 
-    @Column(name = "productConentNameUz", nullable = false)
-    private String productContentUz;
-
-    @Column(name = "productConentNameRu", nullable = false)
-    private String productContentRu;
-
+    @Column(name = "productConentName", nullable = false)
+    private String productContent;
 
     private @JoinColumn(name = "fileProduct_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,6 +29,7 @@ public class ProductContent extends BaseIntegerIdEntity {
 
     private @JoinColumn(name = "product_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
+    @Lookup(type = LookupType.DROPDOWN, actions = "lookup")
     @NotNull
     Product product;
 
@@ -38,20 +37,12 @@ public class ProductContent extends BaseIntegerIdEntity {
         return serialVersionUID;
     }
 
-    public String getProductContentUz() {
-        return productContentUz;
+    public String getProductContent() {
+        return productContent;
     }
 
-    public void setProductContentUz(String productContentUz) {
-        this.productContentUz = productContentUz;
-    }
-
-    public String getProductContentRu() {
-        return productContentRu;
-    }
-
-    public void setProductContentRu(String productContentRu) {
-        this.productContentRu = productContentRu;
+    public void setProductContent(String productContent) {
+        this.productContent = productContent;
     }
 
     public FileDescriptor getFileProduct() {
