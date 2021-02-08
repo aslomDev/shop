@@ -32,6 +32,8 @@ public class TgConfig extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        // emoji // https://www.webfx.com/tools/emoji-cheat-sheet/
+
 //        try {
 //            mediaUtils.uploadFile(update.getMessage().getPhoto().get(2).getFileId());
 //

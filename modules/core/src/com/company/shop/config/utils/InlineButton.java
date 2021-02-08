@@ -1,5 +1,6 @@
 package com.company.shop.config.utils;
 
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -11,10 +12,35 @@ import java.util.List;
 @Component
 public class InlineButton {
 
+
     public InlineKeyboardButton button(String text, String callbackData) {
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setText(text);
         inlineKeyboardButton.setCallbackData(callbackData);
+        return inlineKeyboardButton;
+    }
+
+    public InlineKeyboardButton buttonEmojiBack(String text, String callbackData) {
+        String back = EmojiParser.parseToUnicode(":arrow_left:");
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(back+" "+text);
+        inlineKeyboardButton.setCallbackData(callbackData);
+        return inlineKeyboardButton;
+    }
+
+    public InlineKeyboardButton buttonEmojiNext(String text, String callbackData) {
+        String next = EmojiParser.parseToUnicode(":arrow_right:");
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(text +" "+ next);
+        inlineKeyboardButton.setCallbackData(callbackData);
+        return inlineKeyboardButton;
+    }
+
+    public InlineKeyboardButton center() {
+        String next = EmojiParser.parseToUnicode(":on:");
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText(next);
+        inlineKeyboardButton.setCallbackData("null");
         return inlineKeyboardButton;
     }
 

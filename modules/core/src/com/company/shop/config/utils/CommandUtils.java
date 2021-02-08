@@ -1,6 +1,7 @@
 package com.company.shop.config.utils;
 
 import com.company.shop.service.UserService;
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -96,31 +97,36 @@ public class CommandUtils {
 
     public SendMessage productNextButton(Update update) {
         Message message = update.getCallbackQuery().getMessage();
+        String emojiText = EmojiParser.parseToUnicode(":arrow_up:");
         String data = update.getCallbackQuery().getData();
         sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText(".");
+        if (lang.getLang(update).equals("ru")) {
+            sendMessage.setText("контент  " + emojiText);
+        }else if (lang.getLang(update).equals("uz")){
+            sendMessage.setText("content  " + emojiText);
+        }
         if (data.startsWith("category#next*")) {
             if (lang.getLang(update).equals("uz")){
               if (lang.getout(update)){
                   sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
-                          inlineButton.button("orqaga", "goods#"),
-                          inlineButton.button("yana", "category#next*")
+                          inlineButton.buttonEmojiBack(" orqaga", "goods#"),
+                          inlineButton.buttonEmojiNext(" yana", "category#next*")
                   ))));
               }else if (!lang.getout(update)){
                   sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(
                           inlineButton.row(
-                                  inlineButton.button("orqaga", "goods#")
+                                  inlineButton.buttonEmojiBack(" orqaga", "goods#")
                           ))));
               }
             } else if (lang.getLang(update).equals("ru")){
                 if (lang.getout(update)){
                     sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
-                            inlineButton.button("назад", "goods#"),
-                            inlineButton.button("ешё", "category#next*")
+                            inlineButton.buttonEmojiBack(" назад", "goods#"),
+                            inlineButton.buttonEmojiNext(" ешё", "category#next*")
                     ))));
                 }else if (!lang.getout(update)){
                     sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
-                            inlineButton.button("назад", "goods#")
+                            inlineButton.buttonEmojiBack(" назад", "goods#")
                     ))));
                 }
             }
@@ -128,23 +134,23 @@ public class CommandUtils {
             if (lang.getLang(update).equals("uz")) {
                 if (lang.getout(update)){
                     sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
-                            inlineButton.button("orqaga", "goods#"),
-                            inlineButton.button("yana", "category#next*")
+                            inlineButton.buttonEmojiBack(" orqaga", "goods#"),
+                            inlineButton.buttonEmojiNext(" yana", "category#next*")
                     ))));
                 }else if (!lang.getout(update)){
                     sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
-                            inlineButton.button("orqaga", "goods#")
+                            inlineButton.buttonEmojiBack(" orqaga", "goods#")
                     ))));
                 }
             } else if (lang.getLang(update).equals("ru")){
                 if (lang.getout(update)){
                     sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
-                            inlineButton.button("назад", "goods#"),
-                            inlineButton.button("ешё", "category#next*" + 1)
+                            inlineButton.buttonEmojiBack(" назад", "goods#"),
+                            inlineButton.buttonEmojiNext(" ешё", "category#next*" + 1)
                     ))));
                 }else if (!lang.getout(update)){
                     sendMessage.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
-                            inlineButton.button("назад", "goods#")
+                            inlineButton.buttonEmojiBack(" назад", "goods#")
                     ))));
                 }
             }
@@ -176,12 +182,12 @@ public class CommandUtils {
         if (lang.getLang(update).equals("uz")){
             editMessageText.setText("uzur hozircha content mavjud emas!");
             editMessageText.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
-                    inlineButton.button("oqaga", "goods#")
+                    inlineButton.buttonEmojiBack("oqaga", "goods#")
             ))));
         }else if (lang.getLang(update).equals("ru")){
             editMessageText.setText("контент не найдено!");
             editMessageText.setReplyMarkup(inlineButton.markup(inlineButton.collection(inlineButton.row(
-                    inlineButton.button("назад", "goods#")
+                    inlineButton.buttonEmojiBack("назад", "goods#")
             ))));
         }
         return editMessageText;

@@ -11,6 +11,7 @@ import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.FileLoader;
 import com.haulmont.cuba.core.global.FileStorageException;
 import com.haulmont.cuba.security.app.Authentication;
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -101,9 +102,10 @@ public class ProductServiceBean implements ProductService {
         try {
             if (userService.getUserId(id) != null){
                 if (file.size() == 1){
+                    String emoj = EmojiParser.parseToUnicode(caption);
                     SendPhoto sendPhoto = new SendPhoto();
                     sendPhoto.setChatId(id);
-                    sendPhoto.setCaption(caption);
+                    sendPhoto.setCaption(emoj);
                     InputFile inputFile = new InputFile();
                     inputFile.setMedia(fileLoader.openStream(file.get(0)), file.get(0).getName());
                     authentication.begin();
@@ -119,7 +121,8 @@ public class ProductServiceBean implements ProductService {
                         InputMediaPhoto inputMedia = new InputMediaPhoto();
                         inputMedia.setMedia(fileLoader.openStream(fileDescriptor), fileDescriptor.getName());
                         if (file.size() == item) {
-                            inputMedia.setCaption(caption);
+                            String emoj = EmojiParser.parseToUnicode(caption);
+                            inputMedia.setCaption(emoj);
                         }
                         mediaList.add(inputMedia);
                     }

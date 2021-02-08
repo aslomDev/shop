@@ -7,6 +7,7 @@ import com.company.shop.service.ProductService;
 import com.company.shop.service.UserService;
 import com.haulmont.cuba.core.global.FileLoader;
 import com.haulmont.cuba.core.global.FileStorageException;
+import com.vdurmont.emoji.EmojiParser;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
@@ -68,9 +69,12 @@ public class MediaUtils {
                                     for (Product product1 : pCaption){
                                         if (product.getId().equals(product1.getId())){
                                             if (lang.getLang(update).equals("ru")) {
-                                                inputMedia.setCaption(product1.getDescriptionRu());
-                                            }else  if (lang.getLang(update).equals("uz")) {
-                                                inputMedia.setCaption(product1.getDescriptionUz());
+                                                String emoj = EmojiParser.parseToUnicode(product.getDescriptionRu());
+                                                inputMedia.setCaption(emoj);
+
+                                            }else  if (lang.getLang(update).equals("uz")){
+                                                String emoj = EmojiParser.parseToUnicode(product.getDescriptionUz());
+                                                inputMedia.setCaption(emoj);
                                             }
                                         }
                                     }
@@ -104,9 +108,11 @@ public class MediaUtils {
                                     for (Product product1 : pCaption){
                                         if (product.getId().equals(product1.getId())){
                                             if (lang.getLang(update).equals("ru")) {
-                                                inputMedia.setCaption(product1.getDescriptionRu());
+                                                String emoj = EmojiParser.parseToUnicode(product.getDescriptionRu());
+                                                inputMedia.setCaption(emoj);
                                             }else  if (lang.getLang(update).equals("uz")) {
-                                                inputMedia.setCaption(product1.getDescriptionUz());
+                                                String emoj = EmojiParser.parseToUnicode(product.getDescriptionUz());
+                                                inputMedia.setCaption(emoj);
                                             }
                                         }
                                     }
@@ -368,9 +374,11 @@ public class MediaUtils {
                       for (Product product2 : products){
                           if (product.getId().equals(product2.getId())){
                               if (lang.getLang(update).equals("uz")){
-                                  sendPhoto.setCaption(product.getDescriptionUz());
+                                  String emoj = EmojiParser.parseToUnicode(product.getDescriptionUz());
+                                  sendPhoto.setCaption(emoj);
                               }else if (lang.getLang(update).equals("ru")){
-                                  sendPhoto.setCaption(product.getDescriptionRu());
+                                  String emoj = EmojiParser.parseToUnicode(product.getDescriptionRu());
+                                  sendPhoto.setCaption(emoj);
                               }
                           }
                       }

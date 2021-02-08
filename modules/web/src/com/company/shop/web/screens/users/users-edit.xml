@@ -21,12 +21,6 @@
                     <textField id="userNameField" property="userName"/>
                     <textField id="phoneNumberField" property="phoneNumber"/>
                     <textField id="userIdField" property="userId"/>
-                    <textField id="langField" property="lang"/>
-                    <textField id="itemField" property="item"/>
-                    <textField id="goodsIdField" property="goodsId"/>
-                    <textField id="categoryIdField" property="categoryId"/>
-                    <checkBox id="outContentField" property="outContent"/>
-                    <checkBox id="oneContentField" property="oneContent"/>
                 </column>
             </form>
         </scrollBox>

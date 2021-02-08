@@ -2,6 +2,7 @@ package com.company.shop.config.utils;
 
 import com.company.shop.service.CategoryService;
 import com.company.shop.service.GoodsService;
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -26,7 +27,7 @@ public class ButtonUtils {
                        inlineButton.button("пока не чего нету", "null")
                ));
                 collection.add(inlineButton.row(
-                        inlineButton.button("назад", "ru")
+                        inlineButton.buttonEmojiBack("назад", "ru")
                 ));
                 return collection;
             }else  if (lang.equals("uz")){
@@ -34,7 +35,7 @@ public class ButtonUtils {
                         inlineButton.button("hozircha hech nima yo'q", "null")
                 ));
                 collection.add(inlineButton.row(
-                        inlineButton.button("orqaga", "uz")
+                        inlineButton.buttonEmojiBack("orqaga", "uz")
                 ));
                 return collection;
             }
@@ -43,27 +44,28 @@ public class ButtonUtils {
             if (lang.equals("uz")){
                goodsService.getGoods().forEach(i -> {
                    InlineKeyboardButton button = new InlineKeyboardButton();
-                   button.setText(i.getGoodsUz());
+                   String emoj = EmojiParser.parseToUnicode(i.getGoodsUz());
+                   button.setText(emoj);
                    button.setCallbackData("goods#Category" + i.getId());
-//                   userService.CreateGoods(userId, i.getId());
                    row.add(button);
                });
                collection.add(row);
                collection.add(inlineButton.row(
-                       inlineButton.button("orqaga", "start")
+                       inlineButton.buttonEmojiBack("orqaga", "start")
                ));
                return collection;
            }else  if (lang.equals("ru")){
                goodsService.getGoods().forEach(i -> {
                    InlineKeyboardButton button = new InlineKeyboardButton();
-                   button.setText(i.getGoodsRu());
+                   String emoj = EmojiParser.parseToUnicode(i.getGoodsRu());
+                   button.setText(emoj);
                    button.setCallbackData("goods#Category" + i.getId());
                    System.out.println("id ru "+ i.getId());
                    row.add(button);
                });
                collection.add(row);
                collection.add(inlineButton.row(
-                       inlineButton.button("назад", "start")
+                       inlineButton.buttonEmojiBack("назад", "start")
                ));
                return collection;
            }
@@ -82,7 +84,7 @@ public class ButtonUtils {
                 ));
 
                 collection.add(inlineButton.row(
-                        inlineButton.button("назад", "ru")
+                        inlineButton.buttonEmojiBack("назад", "ru")
                 ));
                 return collection;
             }else  if (lang.equals("uz")){
@@ -91,7 +93,7 @@ public class ButtonUtils {
                 ));
 
                 collection.add(inlineButton.row(
-                        inlineButton.button("orqaga", "uz")
+                        inlineButton.buttonEmojiBack("orqaga", "uz")
                 ));
                 return collection;
             }
@@ -101,27 +103,29 @@ public class ButtonUtils {
               categoryService.getCategory(id).forEach(i -> {
                   InlineKeyboardButton button = new InlineKeyboardButton();
                   List<InlineKeyboardButton> row2 = new LinkedList<>();
-                  button.setText(i.getCategoryUz());
+                  String emoj = EmojiParser.parseToUnicode(i.getCategoryUz());
+                  button.setText(emoj);
                   button.setCallbackData("category#Product" + i.getId());
                   row2.add(button);
                   collection.add(row2);
               });
               collection.add(inlineButton.row(
-                      inlineButton.button("orqaga", "uz")
+                      inlineButton.buttonEmojiBack("orqaga", "uz")
               ));
               return collection;
           }else  if (lang.equals("ru")){
               categoryService.getCategory(id).forEach(i -> {
                   InlineKeyboardButton button = new InlineKeyboardButton();
                   List<InlineKeyboardButton> row2 = new LinkedList<>();
-                  button.setText(i.getCategoryRu());
+                  String emoj = EmojiParser.parseToUnicode(i.getCategoryRu());
+                  button.setText(emoj);
                   button.setCallbackData("category#Product" + i.getId());
                   row2.add(button);
                   collection.add(row2);
               });
 //              collection.add(row);
               collection.add(inlineButton.row(
-                      inlineButton.button("назад", "ru")
+                      inlineButton.buttonEmojiBack("назад", "ru")
               ));
               return collection;
           }
@@ -134,11 +138,11 @@ public class ButtonUtils {
             List<InlineKeyboardButton> row = new LinkedList<>();
             if (lang.equals("uz")){
                 collection.add(inlineButton.row(inlineButton.button("hech nima topilmadi", "null")));
-                collection.add(inlineButton.row(inlineButton.button("orqaga", "goods#")));
+                collection.add(inlineButton.row(inlineButton.buttonEmojiBack("orqaga", "goods#")));
                 return collection;
             }else if (lang.equals("ru")){
                 collection.add(inlineButton.row(inlineButton.button("Ничего не найдено", "null")));
-                collection.add(inlineButton.row(inlineButton.button("назад", "goods#")));
+                collection.add(inlineButton.row(inlineButton.buttonEmojiBack("назад", "goods#")));
                 return collection;
             }
             return null;
